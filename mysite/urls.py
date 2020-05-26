@@ -13,6 +13,7 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+from django.conf.urls import url
 from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
@@ -30,6 +31,7 @@ def handler404(request, exception):
         return render(request, '1404.html')
 
 urlpatterns = [
+    path('sakila/', include('sakila.urls')),
     path('', include('crud.urls')),
     path('', TemplateView.as_view(template_name='home.html'), name='home'),
     path('login/', auth_views.LoginView.as_view(template_name='login.html'), name='login'),
@@ -38,3 +40,14 @@ urlpatterns = [
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
 handler404 = handler404
+
+if settings.DEBUG:
+    # 장고 디버그 툴바 Django Debug Toolbar 쿼리 디버그
+    import debug_toolbar
+    urlpatterns = [
+        url('__debug__/', include(debug_toolbar.urls)),
+
+        # For django versions before 2.0:
+        # url(r'^__debug__/', include(debug_toolbar.urls)),
+
+    ] + urlpatterns
